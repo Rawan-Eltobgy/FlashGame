@@ -1,0 +1,419 @@
+<html>
+
+<head>
+ <style type="text/css" media="screen">
+    canvas, img { display:block; margin:1em auto; border:1px solid black;}
+    canvas { background:url(bg.png) }
+    body{
+    background-color: #373174;
+    }
+    @font-face{
+  font-family:Aracde Classic;
+  src:url('ARCADE_C.ttf')
+}
+
+#canvas{
+z-index:9998;}
+
+#v {
+z-index:9999;
+    position: absolute;
+    top: 6%;
+    left: 28%;   
+}
+#myaudio{
+  position: absolute;
+  padding-left: 550px; 
+  text-align: center;
+}
+h3{
+color: white; 
+}
+h2{
+color: white; 
+
+	font-size: 25px ;
+	  font-family:Aracde Classic;
+  text-shadow: 4px 4px 0px rgba(0,0,0,0.1);}
+   .audio{
+   	display:none;
+   }
+    .canvas{
+    	display:none;
+    }
+    .gameover-section{
+    	display:none;
+    	margin-left:40%;
+  margin-top:5%;
+
+    }
+    .gameover-section h1{
+    	font-size: 40px ;
+	  font-family:Aracde Classic;
+	  color:#fff;
+    }
+    .gameover-section input{
+      margin-left:-80px;
+
+    	background-color: transparent;
+    	border:2px solid transparent;
+      color:#fff;
+  font-size: 40px ;
+    font-family:Aracde Classic;
+    }
+
+  .form input{
+    width:500px;
+        background-color: transparent;
+      border:2px solid #fff;
+      color:#fff;
+  font-size: 20px ;
+    font-family:Aracde Classic;
+  }
+  </style>
+    </head>
+    <body> 
+<div class="game-section" id="game-section">
+  <h2 id="timer" style="text-align: center;"></h2>
+     <div class="canvas" id="mycanvas">
+  
+        <audio id="clearsound" src="sound/pop.ogg" muted preload="auto"></audio> 
+		<canvas id="canvas" width="700" height="500" style="border: 1px solid #c3c3c3;background-image: url('1.jpg');background-repeat:no-repeat;background-size:100% 100%;">
+        Error</canvas>
+
+  <div class="audio" id="myaudio">
+<h3> Missing Pokémon? 💕 <br> play this 😉 </h3> <audio id="main_music" muted loop controls>
+  <source src="8bitpoke.mp3" type="audio/mpeg">
+  <source src="http://dl.dropbox.com/u/26141789/canvas/snake/main.ogg" type="audio/ogg"/>
+</audio>
+</div>
+        </div>
+        <div class="video">
+        <video id="v" muted width="704" height="504" autoplay>
+    <source src=wlc.mp4 type=video/mp4>
+</video>
+</div>
+
+
+   
+   </div>
+   <div class="gameover-section" id="gameover-section">
+  
+   <form>
+   <input id="gameover">
+   <form>
+   <div class="form">
+   <form id="playersData" method="GET" action="Insert.php" style="display: none;">
+  <h1>Player One:  </h1>
+  <input type="text" name="player1">
+  <input type="text" name="score1" id="score1" readonly>
+</br>
+  <h1>Player Two:  </h1>
+  <input type="text" name="player2">
+  <input type="text" name="score2" id="score2" readonly="true">
+  </br>
+  <input type="submit" value="Results 😉">
+  </form>
+  
+   </div>
+  <script>
+
+  var canvas=document.getElementById("canvas");
+  var video = document.getElementById('v');
+
+   document.getElementById('v').addEventListener('ended',myHandler,false);
+    function myHandler(e) {
+       document.getElementById("myaudio").style.display="block";
+       document.getElementById("mycanvas").style.display="block";
+    }
+function vid(){
+video.addEventListener('ended', function(){
+    video.style.display = 'none'; 
+}, false);}
+
+  var ctx=canvas.getContext("2d");
+  var ballRadius=20;
+  var x = canvas.width/2;
+  var y = canvas.height-30;
+  var mainMusic = document.getElementById("main_music");
+  var dx = 2;
+  var dy = -2;
+  var paddleHeight = 10;
+  var paddleWidth=80;
+  var flag=0;
+  var paddle1X = (canvas.width - paddleWidth) / 2;
+  var paddle2X = (canvas.width - paddleWidth) / 2;
+  //var img = new Image();
+  var audio = new Audio('pi.mp3');
+ var p1sound = ["p1.m4a","way.m4a"];
+ 
+
+  var p1=0;
+  var p2=-1;
+ 
+   var rightPressed1 = false;
+   var leftPressed1 = false;
+   var rightPressed2 = false;
+   var leftPressed2 = false;
+var count=60;
+
+var counter=setInterval(run, 1000); //1000 will  run it every 1 second
+
+function run() {    
+    // run this code
+
+    setTimeout(timer, 9000);    
+}
+function timer()
+{
+  count=count-1;
+  console.log(count);
+  if (count <= 0)
+  {
+
+     clearInterval(counter);
+     //counter ended, do something here
+   if(p1>p2){
+   var win=p1;
+   ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.font = "53px 'Aracde Classic' ";
+    ctx.fillStyle = "#0095DD";
+      document.getElementById("gameover").value="Winner is Player 1";
+ 
+     ctx.fillText(" Player1 Wins,Score : "+win, 200, 250);
+    //setTimeout(function(){document.location.reload();}, 6000);
+  }
+   else{
+   var win=p2;
+   ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.font = "53px 'Aracde Classic' ";
+    ctx.fillStyle = "#0095DD";
+    ctx.fillText(" Player2 Wins,Score : "+win, 200, 250);
+    document.getElementById("gameover").value="Winner is Player 2";
+   // setTimeout(function(){document.location.reload();}, 6000);
+  }
+  gameOver();
+
+  //alert("Win "+win);
+     return;
+  }
+
+  //Do code for showing the number of seconds here
+  document.getElementById("timer").innerHTML="Time:  "+count + " secs";
+}
+ 
+ function gameOver(){
+        document.getElementById("score1").value=p1;
+        document.getElementById("score2").value=p2;
+  document.getElementById("game-section").style.display="none";
+  document.getElementById("gameover-section").style.display="block";
+  document.getElementById("playersData").style.display="block";
+ 	
+
+ }
+document.addEventListener("keydown", keyDownHandler, false);
+document.addEventListener("keyup", keyUpHandler, false);
+document.addEventListener("keydown", keyDownHandlerTwo, false);
+document.addEventListener("keyup", keyUpHandlerTwo, false);
+
+
+function keyDownHandler(e) { //code 37 left cursor ,39 right
+    if(e.keyCode == 39) {
+        rightPressed1 = true;
+    }
+    else if(e.keyCode == 37) {
+        
+        leftPressed1 = true;
+    }
+}
+function keyDownHandlerTwo(e) { //code 65==A left cursor ,68==D right
+    if(e.keyCode == 68) {
+        rightPressed2 = true;
+    }
+    else if(e.keyCode == 65) {
+        leftPressed2 = true;
+    }
+}
+
+function keyUpHandler(e) {
+    if(e.keyCode == 39) {
+        rightPressed1 = false;
+    }
+    else if(e.keyCode == 37) {
+        leftPressed1 = false;
+    }
+}
+function keyUpHandlerTwo(e) {
+    if(e.keyCode == 68) {
+        rightPressed2 = false;
+    }
+    else if(e.keyCode == 65) {
+        leftPressed2 = false;
+    }
+}
+
+function drawScore() {
+    ctx.font = "16px 'Aracde Classic'";
+    ctx.fillStyle = "#0095DD";
+    ctx.fillText(" Player1 Score: "+p1, 8, 20);
+  ctx.fillText(" Player2 Score: "+p2, 8, 40);
+}
+
+function drawBall() {
+    
+    ctx.beginPath();
+    ctx.arc(x, y, ballRadius, 0, Math.PI*2);
+    ctx.fillStyle = 'blue';
+    ctx.fill();
+    ctx.closePath();
+}
+
+
+function drawPaddle1() {
+    ctx.beginPath();
+  ctx.rect(paddle1X, 403, paddleWidth, 15);
+   
+    ctx.fillStyle = "#0095DD";
+    ctx.fill();
+    ctx.closePath();
+  
+}
+function drawPaddle2() {
+    ctx.beginPath();
+    ctx.rect(paddle2X, 80, paddleWidth, 15);
+    ctx.fillStyle = "#0095DD";
+    ctx.fill();
+    ctx.closePath();
+  
+}
+function drawGoals (){
+ctx.beginPath();
+ctx.lineWidth="8";
+ctx.strokeStyle="black";
+ctx.rect(250,2,220,75);
+ctx.rect(250,422,220,75);
+ctx.stroke();
+ctx.closePath(); }
+
+
+function draw() {
+
+   ctx.clearRect(0, 0, canvas.width, canvas.height);
+   
+   //vid();
+   
+   
+       drawBall();
+  drawPaddle1();
+    drawPaddle2();
+  drawGoals();
+  drawScore();
+
+    if(x + dx > canvas.width-ballRadius || x + dx < ballRadius) {
+        dx = -dx;
+        audio.play();
+    }
+    if(y + dy < ballRadius) {
+        dy = -dy;
+        audio.play();
+    }
+  else if ((y + dy > 421-ballRadius)&&(x+dx >250)&&(x+dx<470)){ //goal handling down
+   if(count<1){
+      p2=p2;
+    }
+    else{
+      p2++;
+    }
+  
+    x = canvas.width/2;
+   y = canvas.height/2;
+  
+  dx = 2;
+   dy = -2;
+  
+  }
+  else if ((y + dy < 81-ballRadius)&&(x+dx >235)&&(x+dx<470)){ //goal handling up
+    if(count<1){
+      pl=pl;
+    }
+    else{
+      p1++;
+    }
+  
+ var random_file1 = p1sound[Math.floor(Math.random() * p1sound.length)];
+ var ap1 = new Audio(random_file1);
+ ap1.play();
+    x = canvas.width/2;
+   y = canvas.height/2;
+  
+  dx = 2;
+   dy = -2;
+   
+  }
+  else if(y + dy < 82+ballRadius) {
+        if(x > paddle2X && x < paddle2X + paddleWidth) {
+        audio.play();
+            dy = -dy;
+        }}
+    else if(y + dy > 411-ballRadius) {
+        if(x > paddle1X && x < paddle1X + paddleWidth) {
+        audio.play();
+            dy = -dy;
+        }
+    }
+    
+    else if (y+dx >canvas.height-ballRadius){
+    audio.play();
+    dy=-dy;
+    }
+    
+      /**  else {
+            alert("GAME OVER");
+            document.location.reload();
+        }**/
+
+    
+
+
+  if (rightPressed1 && paddle1X < canvas.width - paddleWidth) {
+    paddle1X += 7;
+  } else if (leftPressed1 && paddle1X > 0) {
+    paddle1X -= 7;
+  }
+  if (rightPressed2 && paddle2X < canvas.width - paddleWidth) {
+    paddle2X += 7;
+  } else if (leftPressed2 && paddle2X > 0) {
+    paddle2X -= 7;
+  }
+
+  x += dx;
+  y += dy;
+  /**if(p1 == 7)
+  {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.font = "50px Arial";
+    ctx.fillStyle = "#0095DD";
+    ctx.fillText(" Player 1 Wins", 200, 250);
+    setTimeout(function(){document.location.reload();}, 6000);
+  }
+  else if (p2 == 7) 
+  {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.font = "50px Arial";
+    ctx.fillStyle = "#0095DD";
+    ctx.fillText(" Player 2 Wins", 200, 250);
+    setTimeout(function(){document.location.reload();}, 6000);
+  }**/
+}
+
+function play(){
+    vid();
+    setTimeout(function(){draw();},9000);
+    
+    }
+
+setInterval(play, 10);
+</script>
+
+    </body>
+</html>
